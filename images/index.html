@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鹿倡鸣 | 视觉作品集 Portfolio</title>
+    <meta name="description" content="摄影师 / 视觉内容运营 / AI 影像创作者 - 作品集">
+    
+    <!-- 预加载字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           全局变量与基础设置
+           ========================================= */
+        :root {
+            --bg-color: #FAFAFA;
+            --bg-subtle: #F5F5F5;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --text-light: #999999;
+            --border-color: #E5E5E5;
+            --accent: #1a1a1a;
+            --hover-transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 背景微妙纹理 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* 入场动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* =========================================
+           头部：个人名片
+           ========================================= */
+        header {
+            margin-bottom: 80px;
+            padding-bottom: 50px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .header-left h1 {
+            font-size: 36px;
+            margin: 0 0 12px 0;
+            letter-spacing: 4px;
+            font-weight: 700;
+            font-family: "Noto Serif SC", serif;
+        }
+
+        .header-left .subtitle {
+            margin: 0 0 20px 0;
+            color: var(--text-muted);
+            font-size: 15px;
+            max-width: 580px;
+            line-height: 1.9;
+        }
+
+        .theme-tag {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 11px;
+            color: var(--text-light);
+            background-color: var(--bg-subtle);
+            padding: 6px 14px;
+            border-radius: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-right {
+            font-size: 14px;
+            text-align: right;
+            min-width: 200px;
+        }
+
+        .header-right ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .header-right li {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+
+        .wechat-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: var(--bg-subtle);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .wechat-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* 声音开关 */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .sound-toggle.muted::after {
+            content: '🔇';
+        }
+
+        .sound-toggle.unmuted::after {
+            content: '🔊';
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-start;
+        }
+
+        .social-links a {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-subtle);
+            border-radius: 50%;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           通用板块标题
+           ========================================= */
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            margin: 0 0 35px 0;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: 3px;
+            color: var(--text-light);
+            font-family: "Noto Serif SC", serif;
+        }
+
+        /* =========================================
+           视频展厅 - 艺术布局
+           ========================================= */
+        .video-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 200px;
+            gap: 12px;
+            margin-bottom: 100px;
+        }
+
+        .video-item {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        /* 横版视频 */
+        .video-item.horizontal {
+            grid-column: span 2;
+        }
+
+        /* 竖版视频 - 保持比例 */
+        .video-item.vertical {
+            grid-row: span 2;
+        }
+
+        .video-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-item:hover video {
+            transform: scale(1.08);
+            opacity: 1;
+        }
+
+        /* 简约播放图标 */
+        .video-item::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255,255,255,0.6);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .video-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 52%;
+            transform: translate(-50%, -50%);
+            border-style: solid;
+            border-width: 6px 0 6px 10px;
+            border-color: transparent transparent transparent rgba(255,255,255,0.6);
+            z-index: 2;
+        }
+
+        .video-item:hover::after {
+            border-color: rgba(255,255,255,0.9);
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        .video-item:hover::before {
+            border-color: transparent transparent transparent rgba(255,255,255,0.9);
+        }
+
+        /* =========================================
+           照片展厅 - 艺术排版
+           ========================================= */
+        
+        /* 通用网格 */
+        .photo-grid {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 100px;
+        }
+        
+        /* Photography - 瀑布流风格 */
+        .photo-gallery {
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 180px;
+        }
+        
+        .photo-gallery .photo-item:nth-child(1) { grid-row: span 2; }
+        .photo-gallery .photo-item:nth-child(4) { grid-column: span 2; }
+        .photo-gallery .photo-item:nth-child(7) { grid-row: span 2; }
+        .photo-gallery .photo-item:nth-child(9) { grid-column: span 2; }
+        
+        /* Environment - 不规则拼贴 */
+        .env-gallery {
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 160px;
+        }
+        
+        .env-gallery .photo-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+        .env-gallery .photo-item:nth-child(2) { grid-column: span 2; }
+        .env-gallery .photo-item:nth-child(5) { grid-column: span 2; }
+        
+        /* AIGC - 电影感横版 */
+        .aigc-gallery {
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 150px;
+        }
+        
+        .aigc-gallery .photo-item:nth-child(1),
+        .aigc-gallery .photo-item:nth-child(4),
+        .aigc-gallery .photo-item:nth-child(7),
+        .aigc-gallery .photo-item:nth-child(10) { grid-column: span 2; }
+        
+        /* 照片项 */
+        .photo-item {
+            position: relative;
+            overflow: hidden;
+            background-color: #E8E8E8;
+            border-radius: 3px;
+            cursor: zoom-in;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.08);
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .photo-gallery, .env-gallery, .aigc-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 200px;
+            }
+            .photo-gallery .photo-item,
+            .env-gallery .photo-item,
+            .aigc-gallery .photo-item {
+                grid-column: span 1 !important;
+                grid-row: span 1 !important;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .photo-gallery, .env-gallery, .aigc-gallery {
+                grid-template-columns: 1fr;
+                grid-auto-rows: 250px;
+            }
+        }
+
+        /* =========================================
+           悬停字幕
+           ========================================= */
+        .item-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px 24px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            box-sizing: border-box;
+            pointer-events: none;
+            letter-spacing: 1px;
+            transform: translateY(10px);
+        }
+
+        .video-item:hover .item-caption, 
+        .photo-item:hover .item-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           文字简历区域
+           ========================================= */
+        .resume-section {
+            padding-top: 50px;
+        }
+
+        .timeline-item {
+            margin-bottom: 50px;
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 40px;
+            padding-left: 30px;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .timeline-date {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .timeline-content h3 {
+            margin: 0 0 12px 0;
+            font-size: 17px;
+            font-weight: 600;
+            font-family: "Noto Serif SC", serif;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.9;
+        }
+
+        .timeline-content strong {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* =========================================
+           响应式适配
+           ========================================= */
+        @media (max-width: 900px) {
+            .video-gallery { 
+                grid-template-columns: repeat(2, 1fr); 
+                grid-auto-rows: 180px;
+            }
+            .video-item.horizontal, .video-item.vertical {
+                grid-column: span 1;
+            }
+            /* 移动端视频优化 */
+            .video-item video {
+                grid-row: span 1;
+            }
+            .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+        }
+        
+        @media (max-width: 600px) {
+            .video-gallery { 
+                grid-template-columns: 1fr; 
+                grid-auto-rows: 220px;
+            }
+            .video-item.horizontal, .video-item.vertical {
+                grid-column: span 1;
+            }
+            /* 移动端视频优化 */
+            .video-item video {
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .header-right {
+                text-align: left;
+                width: 100%;
+            }
+            
+            .header-right li {
+                justify-content: flex-start;
+            }
+            
+                display: none;
+            }
+            
+            .social-links {
+                justify-content: flex-start;
+            }
+            
+            .header-left h1 {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+            
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding-left: 20px;
+            }
+            
+            .video-gallery { grid-template-columns: 1fr; }
+            .photo-gallery { grid-template-columns: 1fr 1fr; }
+            .container { padding: 30px 16px; }
+        }
+        
+        @media (max-width: 480px) {
+            .photo-gallery { grid-template-columns: 1fr; }
+        }
+
+        /* =========================================
+           灯箱效果
+           ========================================= */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 声音开关 -->
+<button class="sound-toggle muted" id="soundToggle" onclick="toggleSound()"></button>
+
+<div class="container">
+    
+    <header class="animate-in">
+        <div class="header-left">
+            <span class="theme-tag">Portfolio 2024-2025</span>
+            <h1>鹿倡鸣</h1>
+            <p class="subtitle">摄影师 / 视觉内容运营 / AI 影像创作者<br><br>
+               雕塑专业出身，5年专业摄影经验，10年视觉运营经历。<br>
+               现任艺术馆摄影师，擅长AI影像创作与空间策展记录的跨界表达。</p>
+        </div>
+        <div class="header-right">
+            <ul>
+                <li>江苏 苏州</li>
+                <li>期望职位：摄影 / 摄像师</li>
+                <li><a href="mailto:283654889@qq.com" style="color:inherit;text-decoration:none;">283654889@qq.com</a></li>
+            </ul>
+            <a href="#" class="wechat-btn">💬 微信: OrtonMan</a>
+        </div>
+    </header>
+
+    <div class="section-title animate-in delay-1">01 / Motion 动态影像</div>
+    <main class="video-gallery">
+        <div class="video-item horizontal animate-in delay-2" onclick="playFullscreen(this, 'images/AI.mp4')">
+            <video src="images/AI.mp4" muted loop playsinline></video>
+            <div class="item-caption">数字先锋 | AI 影像生成与经典名画碰撞</div>
+        </div>
+        <div class="video-item vertical animate-in delay-2" onclick="playFullscreen(this, 'images/xiangshui.mp4')">
+            <video src="images/xiangshui.mp4" muted loop playsinline></video>
+            <div class="item-caption">商业静物 | 香水光影微距特写</div>
+        </div>
+        <div class="video-item horizontal animate-in delay-3" onclick="playFullscreen(this, 'images/zhanlankongjing.mp4')">
+            <video src="images/zhanlankongjing.mp4" muted loop playsinline></video>
+            <div class="item-caption">空间纪实 | 有南艺术馆·空间与光影</div>
+        </div>
+        <div class="video-item horizontal animate-in delay-3" onclick="playFullscreen(this, 'images/zhongeyishujiaoliu.mp4')">
+            <video src="images/zhongeyishujiaoliu.mp4" muted loop playsinline></video>
+            <div class="item-caption">策展现场 | 她的多重宇宙 (中俄艺术交流)</div>
+        </div>
+        <div class="video-item horizontal animate-in delay-4" onclick="playFullscreen(this, 'images/shenjingdong.mp4')">
+            <video src="images/shenjingdong.mp4" muted loop playsinline></video>
+            <div class="item-caption">展览记录 | 艺术馆现场特写</div>
+        </div>
+        <div class="video-item horizontal animate-in delay-4" onclick="playFullscreen(this, 'images/LaMING.mp4')">
+            <video src="images/LaMING.mp4" muted loop playsinline></video>
+            <div class="item-caption">人物访谈 | 艺术家 LaMING 工作室纪实</div>
+        </div>
+    </main>
+
+    <div class="section-title animate-in delay-1">02 / Photography 静态影像与商业记录</div>
+    <main class="photo-gallery photo-grid">
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/P1044596.jpg" alt="传统戏服"><div class="item-caption">商业摄影 | 传统服饰刺绣工艺特写</div></div>
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/P1044801.jpg" alt="挂耳咖啡"><div class="item-caption">商业摄影 | 东方美学品牌场景化拍摄</div></div>
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/P1034540.jpg" alt="冰饮气泡"><div class="item-caption">商业静物 | 饮品微距与质感呈现</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/P1049763.jpg" alt="竹编夜灯"><div class="item-caption">产品拍摄 | 传统工艺文创光影互动</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/P1049422.jpg" alt="香氛合影"><div class="item-caption">视觉统筹 | 品牌香氛前卫光影大片</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/P1032498.jpg" alt="创意摆件"><div class="item-caption">商业静物 | 创意家居摆件质感呈现</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/P1034425.jpg" alt="冰饮俯拍"><div class="item-caption">商业静物 | 饮品俯拍视觉构成</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/P1032512_20241108_104451.jpg" alt="红色香薰"><div class="item-caption">产品拍摄 | 设计师家居香薰</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/P1034552.jpg" alt="冰杯水珠"><div class="item-caption">商业静物 | 材质与通透感光影控制</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/P1032036.jpg" alt="展览入口"><div class="item-caption">空间记录 | "无法确定的身份" 展览现场</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/P1044556.jpg" alt="装置艺术"><div class="item-caption">装置艺术 | 现场展品空间特写</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/P1046149.jpg" alt="波光水面"><div class="item-caption">材质光影 | 抽象纹理捕捉</div></div>
+    </main>
+
+    <div class="section-title animate-in delay-1">03 / Environment 环境视界</div>
+    <main class="env-gallery photo-grid">
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/SDIM0387_M96_ACP.jpg" alt="建筑全景"><div class="item-caption">环境影像 | 有南艺术馆·建筑全景</div></div>
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/SDIM0357_M73_ACP.jpg" alt="艺术馆大门"><div class="item-caption">日常记录 | 艺术馆大门</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/SDIM0103.jpg" alt="入口空间"><div class="item-caption">日常记录 | 艺术馆入口空间</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/SDIM0109.jpg" alt="混凝土"><div class="item-caption">日常记录 | 工作空间·混凝土质感</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/SDIM1482.jpg" alt="窗外"><div class="item-caption">环境影像 | 窗外环境随拍</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/SDIM0958.jpg" alt="窗户细节"><div class="item-caption">日常记录 | 窗户设计细节</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/SDIM0957.jpg" alt="光影瞬间"><div class="item-caption">日常记录 | 工作空间的光影瞬间</div></div>
+    </main>
+
+    <div class="section-title animate-in delay-1">04 / AIGC Vision 人工智能视觉生成</div>
+    <main class="aigc-gallery photo-grid">
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/ai_gift_1.jpg" alt="森林礼盒">><div class="item-caption">AI 商业静物 | 奇幻森林氛围感礼盒展示</div></div>
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/ai_gift_2.jpg" alt="晚宴礼盒">><div class="item-caption">AI 商业静物 | 高级晚宴场景级产品渲染</div></div>
+        <div class="photo-item animate-in delay-2" onclick="openLightbox(this)"><img src="images/ai_fu.jpg" alt="福字">><div class="item-caption">AI 视觉 | 国潮文创"福"字庭院场景</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/ai_frame.jpg" alt="装饰画">><div class="item-caption">AI 视觉 | 传统纹样装饰画室内光影</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/ai_calendar.jpg" alt="日历">><div class="item-caption">AI 商业视觉 | 艺术日历周边人物交互图</div></div>
+        <div class="photo-item animate-in delay-3" onclick="openLightbox(this)"><img src="images/ai_plate.jpg" alt="餐盘">><div class="item-caption">AI 商业视觉 | 陶瓷印花餐盘文创宣发图</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/ai_blindbox.jpg" alt="盲盒">><div class="item-caption">AI 商业视觉 | 艺术盲盒/小物件生活场景展示</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/ai_gallery_1.jpg" alt="粉色空间">><div class="item-caption">AI 场景生成 | 美术馆观展互动打卡模拟</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/ai_gallery_2.jpg" alt="观展">><div class="item-caption">AI 场景生成 | 画廊空间看展纪实影像模拟</div></div>
+        <div class="photo-item animate-in delay-4" onclick="openLightbox(this)"><img src="images/ai_gallery_3.jpg" alt="自拍">><div class="item-caption">AI 场景生成 | 艺术展览现场打卡宣发图拟真</div></div>
+    </main>
+
+    <div class="section-title animate-in delay-1">05 / Resume 履历与经历</div>
+    <section class="resume-section">
+        <div class="timeline-item animate-in delay-2">
+            <div class="timeline-date">2022.12 - 至今</div>
+            <div class="timeline-content">
+                <h3>苏州有南文化艺术发展有限公司 | 视觉创意统筹 & 主力摄影师</h3>
+                <p>全面把控艺术馆及关联子品牌的视觉影像呈现，构建并沉淀核心视觉资产库，深度将 AI 工具流引入日常创作以实现高效交付：</p>
+                <p><strong>大型特展与海量活动全案纪实：</strong>独立主导《十二集》《亲密的朋友》《生相境界》等 <strong>26 场</strong>核心艺术特展的全周期视觉跟进（涵盖先导预告、布展纪录、开幕式及空间空镜）。累计高质量交付 <strong>166+ 场</strong> "有南系列"公教沙龙及跨界活动的图频物料，保障了馆内高频次活动的影像留存。</p>
+                <p><strong>短视频统筹与社媒视觉驱动：</strong>负责品牌短视频矩阵内容产出。熟练运用 Premiere 与剪映，独立完成从多机位拍摄到后期高效剪辑的完整工作流。持续输出艺术家专访、看展 Vlog 及商业种草视频，精准把控品牌线上网感与视觉调性。</p>
+                <p><strong>高精度商业静物与精修：</strong>负责艺术馆藏品、文创衍生周边及全线商品的高精度商业拍摄。精通 Lightroom Classic (Lrc) 与 Photoshop (PS) 后期处理，结合专业的线下布光技法，精准还原艺术品色彩与材质肌理。</p>
+                <p><strong>AIGC 多模态视觉与内容创新：</strong>深度掌握 AI 工具流进行降本增效。运用 Google Nano Banana 辅助生成高审美氛围海报与策展概念图；借助即梦 / 可灵等 AI 视频模型生成动态前沿素材；同时结合 Gemini 深度优化视频脚本逻辑，运用 OpenClaw 高效输出配套社媒文案。</p>
+            </div>
+        </div>
+
+        <div class="timeline-item animate-in delay-3">
+            <div class="timeline-date">2017.10 - 2022.11</div>
+            <div class="timeline-content">
+                <h3>苏州串门文化传播有限公司 | 内容运营 & 摄影摄像</h3>
+                <p>负责内容视觉运营。统筹视频拍摄与剪辑，主导抖音、小红书等平台推广；完成产品商业拍摄及后期制作。</p>
+            </div>
+        </div>
+
+        <div class="timeline-item animate-in delay-3">
+            <div class="timeline-date">2013.06 - 2017.06</div>
+            <div class="timeline-content">
+                <h3>上海怡和研磨材料有限公司 | 国内电商运营</h3>
+                <p>担任渠道销售经理，主导阿里巴巴线上销售渠道的运营规划，并同步负责相关产品的高质量商业拍摄。</p>
+            </div>
+        </div>
+
+        <div class="timeline-item animate-in delay-4">
+            <div class="timeline-date">2009 - 2013</div>
+            <div class="timeline-content">
+                <h3>三亚学院 | 雕塑 (本科)</h3>
+                <p>美术与雕塑专业训练，培养空间结构与光影感知的敏锐度。</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">×</span>
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+    // 声音开关
+    let isMuted = true;
+    function toggleSound() {
+        isMuted = !isMuted;
+        const btn = document.getElementById('soundToggle');
+        btn.className = 'sound-toggle ' + (isMuted ? 'muted' : 'unmuted');
+        
+        // 更新所有视频的声音
+        document.querySelectorAll('video').forEach(video => {
+            video.muted = isMuted;
+        });
+    }
+
+    // 全屏播放视频
+    function playFullscreen(el, src) {
+        const video = el.querySelector('video');
+        
+        // 创建全屏视频播放器
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;';
+        
+        const fullVideo = document.createElement('video');
+        fullVideo.src = src;
+        fullVideo.controls = true;
+        fullVideo.autoplay = true;
+        fullVideo.muted = isMuted;
+        fullVideo.style.cssText = 'max-width:100%;max-height:100%;';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '✕';
+        closeBtn.style.cssText = 'position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:24px;width:50px;height:50px;border-radius:50%;cursor:pointer;';
+        
+        overlay.appendChild(fullVideo);
+        overlay.appendChild(closeBtn);
+        document.body.appendChild(overlay);
+        
+        closeBtn.onclick = () => overlay.remove();
+        overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+    }
+
+    // 移动端触摸播放
+    document.querySelectorAll('.video-item').forEach(item => {
+        item.addEventListener('touchstart', function() {
+            const video = this.querySelector('video');
+            if (video) {
+                if (video.paused) video.play();
+                else video.pause();
+            }
+        });
+    });
+
+    // 灯箱功能
+    function openLightbox(el) {
+        const img = el.querySelector('img');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        
+        lightboxImg.src = img.src;
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // ESC 关闭灯箱
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    });
+
+    // 滚动入场动画
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-in').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>
